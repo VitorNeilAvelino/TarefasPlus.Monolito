@@ -1,0 +1,88 @@
+﻿@model TarefasPlus.Mvc.Models.TarefaPaginacaoViewModel
+
+@{
+    ViewData["Title"] = "Minhas Tarefas";
+}
+
+<h1>Minhas Tarefas</h1>
+
+<p>
+    <a asp-action="Create">Nova</a>
+</p>
+<table class="table" id="tarefasTable">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Descrição
+            </th>
+            <th>
+                Data
+            </th>
+            <th>
+                Status
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+@section Styles
+{
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.21/dataRender/datetime.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#tarefasTable").DataTable({
+                "language": {
+                    "lengthMenu": "_MENU_ Registros por página",
+                    "search": "Procurar",
+                    "searchPlaceholder": 'Descrição',
+                    "paginate": { "previous": "Retorna", "next": "Avança" },
+                    "zeroRecords": "Nada foi encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sem registros",
+                    "infoFiltered": "(filtrado de _MAX_ regitros totais)"
+                },
+                "ordering": false,
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "lengthMenu": [[10, 20, 30], [10, 20, 30]],
+                "ajax": {
+                    "url": "Tarefas/GetGridData",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                "columnDefs": [{
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "render": function (data) {
+                        return moment(data).format('DD/MM/YYYY HH:mm');
+                    },
+                    "targets": 2
+                }],
+                "columns": [
+                    { "data": "id", "name": "Id", "autoWidth": true },
+                    { "data": "descricao", "name": "Descricao", "autoWidth": true },
+                    { "data": "data", "name": "Data", "autoWidth": true },
+                    { "data": "descricaoStatus", "name": "Status", "autoWidth": true },
+                    {
+                        "render": function (data, type, row) { return "<a href='Tarefas/Edit/" + row.id + "' >Editar</a> | <a href='Tarefas/Delete/" + row.id + "' >Excluir</a>"; }
+                    }
+                ]
+            });
+        });
+    </script>
+}
